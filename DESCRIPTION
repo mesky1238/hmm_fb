@@ -1,0 +1,15 @@
+Package: hmmfb
+Type: Package
+Title: optimized version of `hmm_fb`
+Version: 1.0
+Date: 2017-08-21
+Author: Nicholas Knoblauch
+Maintainer: Nicholas Knoblauch <nwknoblauch@gmail.com>
+Description: Rewrite of R function `forward` using `RcppEigen`
+License: GPL 3.0
+Imports: Rcpp (>= 0.12.12), RcppEigen (>= 0.3.3.3.0),profvis,microbenchmark
+LinkingTo: Rcpp, RcppEigen
+Suggests: testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

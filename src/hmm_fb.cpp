@@ -4,29 +4,20 @@
 
 typedef std::numeric_limits<double> double_lim;
 
-// via the depends attribute we tell Rcpp to create hooks for
-// RcppEigen so that the build process will know what to do
-//
 // [[Rcpp::depends(RcppEigen)]]
-
-// simple example of creating two matrices and
-// returning the result of an operatioon on them
-//
-// via the exports attribute we tell Rcpp to make this function
-// available from R
 
 using namespace Rcpp;
 
 typedef Eigen::Array<double, Eigen::Dynamic, 1> ColumnArray;
 typedef Eigen::Array<double, 1,Eigen::Dynamic > RowArray;
 
-//[[Rcpp::export]]
+// [[Rcpp::export]]
 Eigen::MatrixXd sweep_add (const Eigen::MatrixXd &A,
 			   const Eigen::VectorXd &alpha){
   return(A.rowwise()+alpha.transpose());
 }
 
-//[[Rcpp::export]]
+// [[Rcpp::export]]
 Eigen::ArrayXd sweep_add_logexp (const Eigen::MatrixXd &A,
 				 const Eigen::VectorXd &alpha){
   Eigen::MatrixXd tA = A.rowwise()+alpha.transpose();
@@ -34,12 +25,11 @@ Eigen::ArrayXd sweep_add_logexp (const Eigen::MatrixXd &A,
   return((tA.array().colwise()-tmax).exp().rowwise().sum().log()+tmax);
 }
 
-//[[Rcpp::export]]
+// [[Rcpp::export]]
 double logsumexp(const Eigen::ArrayXd &x){
   auto m=x.minCoeff();
   return(m+std::log((x-m).exp().sum()));
 }
-
 
 Eigen::ArrayXd fbiter(const Eigen::Ref<const Eigen::MatrixXd> A,
 		      const Eigen::Ref<const Eigen::ArrayXd> alpha, 
@@ -48,13 +38,13 @@ Eigen::ArrayXd fbiter(const Eigen::Ref<const Eigen::MatrixXd> A,
   return(sweep_add_logexp(A,alpha)+B);
 }
 
-//[[Rcpp::export(name="fbiter")]]
+// [[Rcpp::export(name = "fbiter")]]
 Eigen::ArrayXd efbiter(Eigen::MatrixXd A, Eigen::ArrayXd alpha, 
 Eigen::ArrayXd B){
   return(fbiter(A,alpha,B));
 }
 
-//[[Rcpp::export]]
+// [[Rcpp::export]]
 Eigen::ArrayXi cpp_cumsum(Eigen::ArrayXi x){
   Eigen::ArrayXi csum(x.size());
   for(int i=0; i<x.size();i++){
@@ -63,7 +53,7 @@ Eigen::ArrayXi cpp_cumsum(Eigen::ArrayXi x){
   return(csum);
 }
 
-//[[Rcpp::export]]
+// [[Rcpp::export]]
 Eigen::ArrayXi gen_bt(const Eigen::MatrixXd &linit,const Eigen::MatrixXd &lA,
 		      const Eigen::MatrixXd &B, Eigen::ArrayXi ntimes){
   size_t lt =ntimes.size();

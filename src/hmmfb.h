@@ -1,5 +1,5 @@
-#ifndef hmm_fb
-#define hmm_fb
+#ifndef hmmfb
+#define hmmfb
 
 #include <RcppEigen.h>
 

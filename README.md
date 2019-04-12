@@ -1,4 +1,4 @@
-# hmm_fb
+# hmmfb: Optimized Version of hmm_fb
 
 To convert a R implementation of forward algorithm to C implementation.
 

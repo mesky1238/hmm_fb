@@ -2,7 +2,7 @@ Encoding: UTF-8
 Package: hmmfb
 Type: Package
 Title: Optimized Version of hmm_fb
-Version: 1.0-1
+Version: 1.0-2
 Date: 2019-04-12
 Authors@R: c(person("Nicholas","Knoblauch",role=c("aut","cre"),
                     email="nwknoblauch@gmail.com"),

@@ -1,4 +1,0 @@
-useDynLib(hmmfb)
-import(RcppEigen)
-importFrom(Rcpp, evalCpp)
-exportPattern("^[[:alpha:]]+")

@@ -15,7 +15,7 @@ test_that("sweep_add_logexp works as expected",{
                apply(sweep(A, 2, b, "+"),1, log.sum.exp))
 })
 
-test_that("I'm overall the same as the old oversion",{
+test_that("I'm overall the same as the old version",{
   
   data("test_data")
   expect_equal(forward(test_data$init, test_data$A, test_data$B, test_data$ntimes, return.all=FALSE, homogeneous=TRUE,useC=TRUE,na.allow=TRUE),

@@ -1,8 +1,7 @@
-// we only include RcppEigen.h which pulls Rcpp.h in for us
 #include "hmmfb.h"
 #include <RcppEigen.h>
-// #include <unsupported/Eigen/CXX11/Tensor>
 #include <limits>
+
 typedef std::numeric_limits<double> double_lim;
 // via the depends attribute we tell Rcpp to create hooks for
 // RcppEigen so that the build process will know what to do
@@ -17,18 +16,18 @@ typedef std::numeric_limits<double> double_lim;
 
 using namespace Rcpp;
 
-
 typedef Eigen::Array<double, Eigen::Dynamic, 1> ColumnArray;
 typedef Eigen::Array<double, 1,Eigen::Dynamic > RowArray;
 
-
 //[[Rcpp::export]]
-Eigen::MatrixXd sweep_add(const Eigen::MatrixXd &A,const Eigen::VectorXd &alpha){
+Eigen::MatrixXd sweep_add (const Eigen::MatrixXd &A,
+			   const Eigen::VectorXd &alpha){
   return(A.rowwise()+alpha.transpose());
 }
 
 //[[Rcpp::export]]
-Eigen::ArrayXd sweep_add_logexp(const Eigen::MatrixXd &A,const Eigen::VectorXd &alpha){
+Eigen::ArrayXd sweep_add_logexp (const Eigen::MatrixXd &A,
+				 const Eigen::VectorXd &alpha){
   Eigen::MatrixXd tA = A.rowwise()+alpha.transpose();
   ColumnArray tmax= A.rowwise().maxCoeff();
   return((tA.array().colwise()-tmax).exp().rowwise().sum().log()+tmax);
@@ -41,18 +40,18 @@ double logsumexp(const Eigen::ArrayXd &x){
 }
 
 
-Eigen::ArrayXd fbiter(const Eigen::Ref<const Eigen::MatrixXd> A,const Eigen::Ref<const Eigen::ArrayXd> alpha, const Eigen::Ref<const Eigen::ArrayXd> B){
+Eigen::ArrayXd fbiter(const Eigen::Ref<const Eigen::MatrixXd> A,
+		      const Eigen::Ref<const Eigen::ArrayXd> alpha, 
+		      const Eigen::Ref<const Eigen::ArrayXd> B){
   auto tA=A.array().rowwise()+alpha.transpose();
   return(sweep_add_logexp(A,alpha)+B);
 }
 
-
 //[[Rcpp::export(name="fbiter")]]
-Eigen::ArrayXd efbiter(Eigen::MatrixXd A, Eigen::ArrayXd alpha, Eigen::ArrayXd B){
+Eigen::ArrayXd efbiter(Eigen::MatrixXd A, Eigen::ArrayXd alpha, 
+Eigen::ArrayXd B){
   return(fbiter(A,alpha,B));
 }
-
-
 
 //[[Rcpp::export]]
 Eigen::ArrayXi cpp_cumsum(Eigen::ArrayXi x){
@@ -64,29 +63,29 @@ Eigen::ArrayXi cpp_cumsum(Eigen::ArrayXi x){
 }
 
 //[[Rcpp::export]]
-Eigen::ArrayXi gen_bt(const Eigen::MatrixXd &linit,const Eigen::MatrixXd &lA,const Eigen::MatrixXd &B, Eigen::ArrayXi ntimes){
+Eigen::ArrayXi gen_bt(const Eigen::MatrixXd &linit,const Eigen::MatrixXd &lA,
+		      const Eigen::MatrixXd &B, Eigen::ArrayXi ntimes){
   size_t lt =ntimes.size();
   size_t ns=linit.cols();
   size_t nt=B.rows();
   
-  // Eigen::MatrixXd linit(init.rows(),init.cols());
-  // linit=init.log();  
   Eigen::ArrayXi et=cpp_cumsum(ntimes);  
   Eigen::ArrayXi bt(et.size());
   bt(0)=0;
   if(et.size()>1){
     bt.tail(et.size()-1)=et.head(et.size()-1);
-    // bt.tail(1)+=1;
   }
   return(bt);
 }
 
-
 //[[Rcpp::export]]
-Rcpp::List forward_rcpp(const Eigen::MatrixXd &linit,const Eigen::MatrixXd &lA,const Eigen::MatrixXd &B, Eigen::ArrayXi ntimes,bool return_all=false){
+Rcpp::List forward_rcpp (const Eigen::MatrixXd &linit,
+			 const Eigen::MatrixXd &lA,
+			 const Eigen::MatrixXd &B, 
+			 Eigen::ArrayXi ntimes,
+			 bool return_all=false) {
   using namespace Rcpp;
   using namespace Eigen;
-  //  forward <- function(init,A,B,ntimes=NULL,return.all=FALSE,homogeneous=TRUE,useC=TRUE,na.allow=TRUE) {
   
   // # Forward-Backward algorithm (used in Baum-Welch)
   // # Returns alpha, beta, and full data likelihood
@@ -102,55 +101,22 @@ Rcpp::List forward_rcpp(const Eigen::MatrixXd &linit,const Eigen::MatrixXd &lA,c
   // # D = dimension of observations (D>1 is multivariate)
   // # N = number of participants
   
-  
-  //   
-  
-  // const Eigen::MatrixXd lA =A.log();
-  
-  
   size_t lt =ntimes.size();
   size_t ns=linit.cols();
   size_t nt=B.rows();
   
-  // Eigen::MatrixXd linit(init.rows(),init.cols());
-  // linit=init.log();  
   Eigen::ArrayXi et=cpp_cumsum(ntimes);  
   Eigen::ArrayXi bt(et.size());
   bt(0)=0;
   if(et.size()>1){
     bt.tail(et.size()-1)=et.head(et.size()-1);
-    // bt.tail(1)+=1;
   }
   
   Eigen::MatrixXd alpha(ns,nt);
   
-  //   Eigen::MatrixXd beta(nt,ns);
-  //   beta.setZero();
-  
-  //   sca.setZero();
-  
-  
   alpha.setZero();
   
   Eigen::ArrayXd sca(nt);
-  
-  
-//   for(case in 1:lt) {
-//     alpha[,bt[case]] <- init[case,] + B[bt[case],] # initialize
-//     sca[bt[case]] <- -log.sum.exp(alpha[,bt[case]])
-//     alpha[,bt[case]] <- alpha[,bt[case]] + sca[bt[case]]
-//     
-//     if(ntimes[case]>1) {
-//       ecase <- et[case]-1
-// # cat("ecase:",ecase,"\n")
-//       for(i in bt[case]:ecase) {
-// # cat("Doing:",i,"\n")
-//         alpha[,i+1] <- sweep_add_logexp(tA,alpha[,i]) + B[i+1,]
-//         sca[i+1] <- -log.sum.exp(alpha[,i+1])
-//         alpha[,i+1] <- sca[i+1] + alpha[,i+1]
-//       }
-//     }
-//   }  
   
   for(int i=0; i<lt; i++){
     int col_num =bt(i);
@@ -178,7 +144,8 @@ Rcpp::List forward_rcpp(const Eigen::MatrixXd &linit,const Eigen::MatrixXd &lA,c
   double like = -(sca.sum());
   
   if(return_all){
-    return Rcpp::List::create(_["alpha"]=alpha.transpose(),_["sca"]=sca,_["logLike"]=like);    
+    return Rcpp::List::create(_["alpha"]=alpha.transpose(),
+			      _["sca"]=sca,_["logLike"] = like);
   }else{
     return Rcpp::List::create(_["logLike"]=like);    
   }

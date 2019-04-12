@@ -14,15 +14,15 @@ Description: Rewrite of R function "forward" using RcppEigen.
 License: GPL (>= 3)
 Depends: R (>= 3.1.0)
 Imports:
-  Rcpp (>= 0.12.12),
-  RcppEigen (>= 0.3.3.3.0)
+    Rcpp (>= 0.12.12),
+    RcppEigen (>= 0.3.3.3.0)
 Suggests:
-  testthat,
-  knitr,
-  rmarkdown,
-  profvis,
-  microbenchmark,
-  tidyverse
+    testthat,
+    knitr,
+    rmarkdown,
+    profvis,
+    microbenchmark,
+    tidyverse
 LinkingTo: Rcpp, RcppEigen
 LazyData: true
 NeedsCompilation: yes

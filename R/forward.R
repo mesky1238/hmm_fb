@@ -1,5 +1,7 @@
-#' @useDynLib hmmfb
+#' @importFrom Rcpp evalCpp
 #'
+#' @useDynLib hmmfb
+#' 
 #' @export
 #' 
 forward <- function (init,A,B,ntimes=NULL,return.all=FALSE,

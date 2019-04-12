@@ -11,8 +11,8 @@ test_that("sweep_add_logexp works as expected",{
   
   A <- matrix(1:4,2,2)
   b <- 1:2
-  expect_equal(sweep_add_logexp(A,b),apply(sweep(A, 2, b, "+"), 1, log.sum.exp))
-
+  expect_equal(sweep_add_logexp(A,b),
+               apply(sweep(A, 2, b, "+"),1, log.sum.exp))
 })
 
 test_that("I'm overall the same as the old oversion",{

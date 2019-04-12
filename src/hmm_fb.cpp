@@ -1,8 +1,9 @@
-#include "hmmfb.h"
-#include <RcppEigen.h>
 #include <limits>
+#include <RcppEigen.h>
+#include "hmmfb.h"
 
 typedef std::numeric_limits<double> double_lim;
+
 // via the depends attribute we tell Rcpp to create hooks for
 // RcppEigen so that the build process will know what to do
 //
